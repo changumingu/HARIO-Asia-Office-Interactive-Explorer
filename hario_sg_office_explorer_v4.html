@@ -1,0 +1,324 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,system-ui)}
+.root{padding:1rem 0}
+.tab-bar{display:flex;gap:2px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1.25rem}
+.tab{font-size:13px;padding:8px 16px;cursor:pointer;background:none;border:none;font-family:inherit;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-0.5px}
+.tab.active{color:var(--color-text-primary);font-weight:500;border-bottom-color:var(--color-text-primary)}
+.section{display:none}.section.active{display:block}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem}
+.filter-btn{font-size:12px;padding:5px 12px;border:0.5px solid var(--color-border-secondary);border-radius:99px;background:transparent;color:var(--color-text-secondary);cursor:pointer;font-family:inherit}
+.filter-btn.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.recce-badge{font-size:11px;background:#FAC775;color:#633806;padding:2px 8px;border-radius:99px;margin-left:6px;font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;cursor:pointer;transition:border-color 0.15s}
+.card:hover{border-color:var(--color-border-secondary)}
+.card.selected{border:1.5px solid var(--color-text-primary)}
+.card.recced{border-left:3px solid #EF9F27}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.card-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.card-zone{font-size:11px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-top:2px}
+.psf-val{font-size:17px;font-weight:500;color:var(--color-text-primary);text-align:right}
+.psf-unit{font-size:11px;color:var(--color-text-tertiary);text-align:right}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}
+.tag{font-size:11px;padding:2px 7px;border-radius:var(--border-radius-md);border:0.5px solid}
+.tag-blue{background:#E6F1FB;color:#185FA5;border-color:#B5D4F4}
+.tag-green{background:#EAF3DE;color:#3B6D11;border-color:#C0DD97}
+.tag-purple{background:#EEEDFE;color:#534AB7;border-color:#CECBF6}
+.tag-gray{background:#F1EFE8;color:#5F5E5A;border-color:#D3D1C7}
+.tag-teal{background:#E1F5EE;color:#0F6E56;border-color:#9FE1CB}
+.tag-coral{background:#FAECE7;color:#993C1D;border-color:#F5C4B3}
+.tag-amber{background:#FAEEDA;color:#633806;border-color:#FAC775}
+.card-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5;margin-top:5px}
+.mrt-row{display:flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;color:var(--color-text-tertiary)}
+.detail-panel{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-top:14px}
+.detail-panel h3{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.detail-close{float:right;cursor:pointer;font-size:20px;color:var(--color-text-tertiary);line-height:1;background:none;border:none}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.detail-item label{font-size:11px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:2px}
+.detail-item span{font-size:13px;color:var(--color-text-primary)}
+.note-box{margin-top:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;color:var(--color-text-secondary);line-height:1.55}
+.note-box strong{color:var(--color-text-primary);font-weight:500}
+.cm-note{margin-top:8px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-left:3px solid #EF9F27;border-radius:0;padding:10px 12px;font-size:13px;color:var(--color-text-secondary);line-height:1.55}
+.cm-note strong{color:var(--color-text-primary);font-weight:500}
+.compare-bar{background:var(--color-background-primary);border-top:0.5px solid var(--color-border-tertiary);padding:10px 0 0;margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.compare-chip{font-size:12px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:99px;padding:3px 10px;color:var(--color-text-primary)}
+.compare-btn{font-size:13px;padding:6px 14px;background:var(--color-text-primary);color:var(--color-background-primary);border:none;border-radius:var(--border-radius-md);cursor:pointer;font-family:inherit;margin-left:auto}
+.summary-table{width:100%;font-size:13px;border-collapse:collapse;margin-top:10px;table-layout:fixed}
+.summary-table th{font-weight:500;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--color-text-tertiary);padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.summary-table td{padding:7px 8px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);vertical-align:top;word-break:break-word}
+.summary-table tr:last-child td{border-bottom:none}
+.winner-tag{background:#EAF3DE;color:#3B6D11;border:0.5px solid #C0DD97;font-size:11px;padding:2px 6px;border-radius:4px}
+.prop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:1rem}
+.prop-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.prop-icon{font-size:22px;margin-bottom:8px;color:var(--color-text-secondary)}
+.prop-name{font-size:14px;font-weight:500;margin-bottom:4px}
+.prop-psf{font-size:12px;margin-bottom:8px;color:var(--color-text-tertiary)}
+.prop-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.55}
+.prop-pros,.prop-cons{margin-top:8px;font-size:12px}
+.prop-pros{color:#3B6D11}.prop-cons{color:#993C1D}
+.prop-row{display:flex;align-items:flex-start;gap:4px;margin-top:3px}
+.psf-bar-wrap{margin:1.5rem 0}
+.psf-bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.psf-bar-track{background:var(--color-background-secondary);border-radius:99px;height:8px;position:relative;width:100%}
+.psf-bar-fill{height:8px;border-radius:99px;position:absolute;left:0;top:0}
+</style>
+
+<div class="root">
+<h2 class="sr-only" style="position:absolute;left:-9999px">HARIO Asia Singapore office relocation explorer — district cards and property type guide</h2>
+
+<div style="margin-bottom:1.25rem">
+  <div style="font-size:18px;font-weight:500;color:var(--color-text-primary)">SG office explorer</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-top:3px">HARIO Asia · relocating from Gateway East (Bugis) · <span style="color:#BA7517">●</span> amber border = recce'd</div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active" onclick="switchTab('districts',this)">Districts</button>
+  <button class="tab" onclick="switchTab('proptypes',this)">Property types</button>
+</div>
+
+<div id="tab-districts" class="section active">
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('cbd',this)">CBD</button>
+    <button class="filter-btn" onclick="setFilter('city-fringe',this)">City fringe</button>
+    <button class="filter-btn" onclick="setFilter('west',this)">West</button>
+    <button class="filter-btn" onclick="setFilter('east',this)">East</button>
+    <button class="filter-btn" onclick="setFilter('north',this)">North</button>
+    <button class="filter-btn" onclick="setFilter('recced',this)">Recce'd <span class="recce-badge">4</span></button>
+  </div>
+  <div class="grid" id="card-grid"></div>
+  <div id="detail-panel" style="display:none"></div>
+  <div id="compare-bar" style="display:none" class="compare-bar">
+    <span style="font-size:13px;color:var(--color-text-secondary)">Compare:</span>
+    <span id="compare-chips"></span>
+    <button class="compare-btn" onclick="showCompare()">Compare ↗</button>
+  </div>
+</div>
+
+<div id="tab-proptypes" class="section">
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem">A guide to Singapore's commercial property categories — from the most prestigious to the most practical.</div>
+  <div class="psf-bar-wrap">
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em">Typical rent range (SGD psf/month)</div>
+    <div id="psf-bars"></div>
+  </div>
+  <div class="prop-grid" id="prop-grid"></div>
+</div>
+</div>
+
+<script>
+const districts=[
+  {id:'raffles',name:'Raffles Place / Downtown',zone:'CBD',filter:'cbd',psfLow:9.5,psfHigh:14.5,recced:false,
+   tags:[['tag-blue','Finance hub'],['tag-gray','Grade A'],['tag-blue','EWL/CCL/DTL']],
+   desc:'Core CBD. Banks, MNCs. Premium rents — Gateway East sits in this tier.',
+   mrt:'Raffles Place / Downtown MRT',buildings:'One Raffles Quay, MBFC, CapitaGreen',parking:'Expensive, limited',
+   cmNote:'⚠️ Current Gateway East location is this tier. High prestige, high cost — overkill for 1 pax.'},
+  {id:'tanjong',name:'Tanjong Pagar / Shenton Way',zone:'CBD',filter:'cbd',psfLow:8.5,psfHigh:13.0,recced:false,
+   tags:[['tag-blue','Finance/Legal'],['tag-gray','Grade A–B'],['tag-blue','EWL/TEL']],
+   desc:'Southern CBD. Corporate law, financial services. Some cheaper Grade B stock.',
+   mrt:'Tanjong Pagar (EWL) · Maxwell (TEL)',buildings:'Guoco Tower, AXA Tower, 79 Robinson Rd',parking:'Limited, pricey',
+   cmNote:'Still CBD-tier pricing. Not the cost reduction we\'re targeting.'},
+  {id:'harbourfront',name:'Harbourfront / Labrador Park',zone:'City fringe',filter:'city-fringe',psfLow:6.5,psfHigh:8.5,recced:true,
+   tags:[['tag-teal','Waterfront'],['tag-green','Grade B'],['tag-blue','CCL/NEL']],
+   desc:'Southern fringe. Good views. Less congested than CBD. Keppel Bay Tower is the landmark building.',
+   mrt:'HarbourFront (CCL/NEL) · Labrador Park (CCL)',buildings:'Keppel Bay Tower, HarbourFront Tower 1 & 2',parking:'Moderate',
+   cmNote:'Recce\'d Labrador Park with R. Quieter coastal feel, CCL connectivity, a few notches below CBD on price.'},
+  {id:'onenorth',name:'one-north / Buona Vista',zone:'West',filter:'west',psfLow:3.5,psfHigh:6.5,recced:true,
+   tags:[['tag-purple','Startups/DeepTech'],['tag-green','Business park'],['tag-teal','R&D/Biomedical'],['tag-blue','CCL/EWL']],
+   desc:'JTC innovation cluster — Biopolis, Fusionopolis, Mediapolis. Home to Grab and Razer. Shuttle services within campus. B1/BP zoning — check use restrictions.',
+   mrt:'one-north (CCL) · Buona Vista (CCL/EWL)',buildings:'Nexus@one-north, Galaxis, ALICE @ Mediapolis, Solaris',parking:'Within campus',
+   cmNote:'Recce\'d with R. Great cost-to-connectivity balance. Need to verify with JTC that our wholesale/showroom use qualifies under B1/BP zoning before signing anything.'},
+  {id:'jurong',name:'Jurong East / Perennial BC',zone:'West',filter:'west',psfLow:4.5,psfHigh:6.5,recced:true,
+   tags:[['tag-green','Business park'],['tag-blue','Jurong Lake District'],['tag-teal','2nd CBD (planned)'],['tag-blue','EWL/NSL']],
+   desc:'Perennial Business City (former Big Box). Flagship JLD business park with BCA Green Mark Platinum. J-Walk to Jurong East MRT, JEM, Westgate. Very large floor plates — check for sub-lets.',
+   mrt:'Jurong East (EWL/NSL · 5-min sheltered walk)',buildings:'Perennial BC, JEM @ Jurong Gateway, Westgate Tower, Int\'l Business Park',parking:'Ample',
+   cmNote:'Recce\'d PBC with R. ~$5 psf is solid. The floor plates are enormous — not practical for us at current headcount. Worth checking if smaller sub-let units exist, or using a co-working desk there instead.'},
+  {id:'bukitbatok',name:'Bukit Batok',zone:'West',filter:'west',psfLow:2.3,psfHigh:3.5,recced:false,
+   tags:[['tag-amber','Lowest cost'],['tag-gray','B1 Industrial-commercial'],['tag-coral','Use restrictions'],['tag-blue','NSL']],
+   desc:'Predominantly B1 light industrial-commercial. Cheapest option in the west by a wide margin. WCEGA Tower and Bukit Batok Crescent units offer small fitted offices. Good amenities at West Mall. JRL (upcoming) adds connectivity.',
+   mrt:'Bukit Batok (NSL) · Bukit Gombak (NSL) · Bukit Batok West (JRL, upcoming)',buildings:'WCEGA Tower, SkyTech Building, Unity Centre, Bukit Batok Crescent units',parking:'Ample, often free',
+   cmNote:'Haven\'t recce\'d yet. Cheapest on the list by a meaningful gap. Industrial character isn\'t ideal for client visits, but could actually work well as an office + storage hybrid given how much product we move. Worth a visit.'},
+  {id:'alexandra',name:'Alexandra / Queenstown',zone:'West',filter:'west',psfLow:4.5,psfHigh:8.0,recced:false,
+   tags:[['tag-teal','Mixed commercial'],['tag-green','Business park'],['tag-gray','Established'],['tag-blue','CCL/EWL']],
+   desc:'Steady pharma, logistics, and corporate back-office demand. Mapletree Business City is the premium asset; Alexandra Technopark is older and cheaper. Good CCL coverage.',
+   mrt:'Labrador Park/Queenstown (CCL) · Redhill (EWL)',buildings:'Mapletree Business City, Alexandra Point, Alexandra Technopark, mTower',parking:'Good',
+   cmNote:'Haven\'t recce\'d this one yet. Sits geographically between Labrador and one-north. MBC is well-regarded; Technopark is older but cheaper. Should add to the list.'},
+  {id:'novena',name:'Novena / Orchard',zone:'City fringe',filter:'city-fringe',psfLow:6.0,psfHigh:9.5,recced:false,
+   tags:[['tag-blue','Healthcare/Pharma'],['tag-gray','Grade B–A'],['tag-blue','NSL/TEL']],
+   desc:'Medical cluster and mid-to-premium offices. Orchard adds retail prestige at a price. Good for client-facing businesses.',
+   mrt:'Novena (NSL) · Orchard (NSL/TEL)',buildings:'Pacific Plaza, Goldbell Tower, Square 2',parking:'Premium rates',
+   cmNote:'Pricier than warranted for a 1-pax setup. Only worth considering if address prestige is a priority for Japan-side.'},
+  {id:'punggol',name:'Punggol Digital District',zone:'North',filter:'north',psfLow:3.5,psfHigh:5.5,recced:false,
+   tags:[['tag-purple','Digital/Cybersec'],['tag-green','Business park'],['tag-blue','NEL/LRT']],
+   desc:'New JTC-developed tech cluster in the far north-east. Integrated with SIT campus. Very affordable but remote from most of Singapore.',
+   mrt:'Punggol (NEL/LRT)',buildings:'JTC Smart Campus (developing)',parking:'Ample',
+   cmNote:'Too far. Would make visits from visiting Japanese management a real slog. Affordable, but not practical for us.'},
+  {id:'changi',name:'Changi Business Park',zone:'East',filter:'east',psfLow:4.2,psfHigh:6.5,recced:false,
+   tags:[['tag-blue','IT/Fintech'],['tag-blue','Near airport'],['tag-green','Business park']],
+   desc:'Mature east-side business park. DBS, Standard Chartered, Cognizant are tenants. Airport proximity useful for shipment-heavy operations.',
+   mrt:'Expo/Changi Airport (CGL)',buildings:'Changi City Point, UE Bizhub East',parking:'Good',
+   cmNote:'Airport adjacency is genuinely useful given our shipment volume. But I\'m west-side and this would make daily life difficult. Could revisit if logistics needs outweigh commute.'},
+  {id:'tampines',name:'Tampines Regional Centre',zone:'East',filter:'east',psfLow:4.0,psfHigh:6.5,recced:false,
+   tags:[['tag-blue','Regional centre'],['tag-gray','Mixed-use'],['tag-blue','EWL/DTL']],
+   desc:'One of Singapore\'s regional hubs. Grade B offices, good transit and retail amenities. Far from CBD.',
+   mrt:'Tampines (EWL/DTL)',buildings:'Tampines Grande, NTUC Income Centre, Singapore Expo',parking:'Good',
+   cmNote:'Not on the recce list. Could be relevant if activities around Heap Seng skew east, but otherwise too far from the west-side suppliers and logistics.'},
+  {id:'payalebar',name:'Paya Lebar / Ubi',zone:'East',filter:'east',psfLow:3.5,psfHigh:5.5,recced:false,
+   tags:[['tag-coral','Budget-friendly'],['tag-gray','Mixed commercial'],['tag-blue','EWL/CCL']],
+   desc:'City-fringe east pocket. Paya Lebar Quarter is newer; Ubi is older industrial-commercial. Growing SME community. Good EWL/CCL interchange.',
+   mrt:'Paya Lebar (EWL/CCL) · Ubi/MacPherson (DTL)',buildings:'Paya Lebar Quarter, ICON@IBP, Central @ MacPherson',parking:'Good',
+   cmNote:'A reasonable middle ground if we want to stay closer to central without CBD pricing. The EWL/CCL interchange at Paya Lebar is genuinely convenient.'}
+];
+
+const propTypes=[
+  {icon:'ti-building-skyscraper',name:'Grade A CBD office',psfLow:9,psfHigh:15,color:'#D85A30',
+   desc:'Premium towers in Raffles Place, Marina Bay, Shenton Way. Floor-to-ceiling glass, full building management, concierge. The most prestigious address in Singapore.',
+   pros:['Top business address','Full amenities and services','Impresses clients and partners'],
+   cons:['Highest cost by far','Min leases typically 2–3 years','Large minimum unit sizes']},
+  {icon:'ti-building-community',name:'Grade B / city fringe office',psfLow:6,psfHigh:9,color:'#534AB7',
+   desc:'Good-quality offices just outside the CBD core — Harbourfront, Novena, Beach Road. Often older or refurbished buildings. Accessible but still premium.',
+   pros:['Decent address without core CBD price','MRT accessible','More flexible lease terms'],
+   cons:['Still expensive vs business parks','Older buildings may lack facilities','Less prestige than Grade A']},
+  {icon:'ti-building-factory-2',name:'Business park (BP / B1)',psfLow:3.5,psfHigh:7,color:'#1D9E75',
+   desc:'JTC-developed or privately-owned campuses — one-north, Jurong, Changi BP. Zoned for "knowledge-intensive" or light industrial use. Good infrastructure and campus amenities, but zoning restricts what tenants can do there.',
+   pros:['Significantly cheaper than CBD','Modern facilities in newer parks','Often includes meeting rooms, F&B, parking'],
+   cons:['B1/BP zoning — not all commercial uses allowed','Sometimes car-dependent','Campus feel rather than city centre']},
+  {icon:'ti-warehouse',name:'B1 industrial-commercial',psfLow:1.8,psfHigh:3.5,color:'#888780',
+   desc:'Light industrial buildings (Bukit Batok, Ubi, Tuas) where some units are fitted as offices. Zoned for industrial use but often permits office-type work. Generally older stock.',
+   pros:['Cheapest option available','Often comes with loading access and high ceilings','Good for product storage + office combo'],
+   cons:['Industrial character — not ideal for client visits','Zoning may restrict commercial activity','May need fit-out investment']},
+  {icon:'ti-armchair',name:'Co-working / serviced office',psfLow:4,psfHigh:12,color:'#BA7517',
+   desc:'Shared workspace providers like WeWork, JustCo, IQ Workplaces, The Great Room. Pay per desk or private room. Month-to-month or short-term commitments. Available across all zones.',
+   pros:['Maximum flexibility — no long lease','All-inclusive (utilities, wifi, reception)','Choose location by need'],
+   cons:['More expensive per sqft than direct leases','Less control over environment','Can feel transient']},
+  {icon:'ti-home-2',name:'HDB commercial / shophouse',psfLow:3,psfHigh:8,color:'#993556',
+   desc:'Ground-floor HDB commercial units or conservation shophouses (Chinatown, Joo Chiat, Tanjong Pagar). Character-filled, but zoning and conservation rules can be restrictive.',
+   pros:['Unique character and branding potential','Good street-level visibility','Mid-range pricing'],
+   cons:['Conservation restrictions on alterations','Limited parking','Not always practical for product-heavy operations']}
+];
+
+const propColors=['#D85A30','#534AB7','#1D9E75','#888780','#BA7517','#993556'];
+let currentFilter='all';
+let selectedIds=[];
+
+function switchTab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='proptypes') renderPropTypes();
+}
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('detail-panel').style.display='none';
+  renderCards();
+}
+
+function renderCards(){
+  const grid=document.getElementById('card-grid');
+  const visible=currentFilter==='all'?districts:currentFilter==='recced'?districts.filter(d=>d.recced):districts.filter(d=>d.filter===currentFilter);
+  grid.innerHTML=visible.map(d=>{
+    const sel=selectedIds.includes(d.id);
+    return `<div class="card ${d.recced?'recced':''} ${sel?'selected':''}" onclick="toggleCard('${d.id}')">
+      <div class="card-top">
+        <div><div class="card-name">${d.name}${d.recced?'<span class="recce-badge">recce\'d</span>':''}</div><div class="card-zone">${d.zone}</div></div>
+        <div><div class="psf-val">$${d.psfLow}–${d.psfHigh}</div><div class="psf-unit">psf / mo</div></div>
+      </div>
+      <div class="tags">${d.tags.map(t=>`<span class="tag ${t[0]}">${t[1]}</span>`).join('')}</div>
+      <div class="card-desc">${d.desc.length>110?d.desc.slice(0,110)+'…':d.desc}</div>
+      <div class="mrt-row"><i class="ti ti-train" aria-hidden="true" style="font-size:13px"></i>${d.mrt.split('·')[0].trim()}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(id){
+  if(selectedIds.includes(id)) selectedIds=selectedIds.filter(x=>x!==id);
+  else if(selectedIds.length<4) selectedIds.push(id);
+  renderCards();
+  updateCompareBar();
+  if(selectedIds.length===0) document.getElementById('detail-panel').style.display='none';
+  else showDetail(id);
+}
+
+function updateCompareBar(){
+  const bar=document.getElementById('compare-bar');
+  const chips=document.getElementById('compare-chips');
+  if(selectedIds.length>0){
+    bar.style.display='flex';
+    chips.innerHTML=selectedIds.map(id=>{const d=districts.find(x=>x.id===id);return `<span class="compare-chip">${d.name.split('/')[0].trim()}</span>`;}).join('');
+  } else bar.style.display='none';
+}
+
+function showDetail(id){
+  const d=districts.find(x=>x.id===id);
+  if(!d) return;
+  const panel=document.getElementById('detail-panel');
+  panel.style.display='block';
+  panel.innerHTML=`<div class="detail-panel">
+    <button class="detail-close" onclick="document.getElementById('detail-panel').style.display='none'" aria-label="Close">×</button>
+    <h3>${d.name}${d.recced?'<span class="recce-badge" style="font-size:12px;margin-left:8px">recce\'d</span>':''}</h3>
+    <div style="font-size:12px;color:var(--color-text-tertiary);margin-top:2px">${d.zone}</div>
+    <div class="detail-grid">
+      <div class="detail-item"><label>Rental range</label><span style="font-weight:500">$${d.psfLow}–$${d.psfHigh} psf/mo</span></div>
+      <div class="detail-item"><label>MRT access</label><span>${d.mrt}</span></div>
+      <div class="detail-item"><label>Key buildings</label><span>${d.buildings}</span></div>
+      <div class="detail-item"><label>Parking</label><span>${d.parking}</span></div>
+    </div>
+    <div class="note-box">${d.desc}</div>
+    <div class="cm-note"><strong>Chang Ming's note:</strong> ${d.cmNote}</div>
+  </div>`;
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function showCompare(){
+  if(selectedIds.length<2) return;
+  const sel=selectedIds.map(id=>districts.find(x=>x.id===id));
+  const lowestPsf=Math.min(...sel.map(d=>d.psfLow));
+  const panel=document.getElementById('detail-panel');
+  panel.style.display='block';
+  panel.innerHTML=`<div class="detail-panel">
+    <button class="detail-close" onclick="document.getElementById('detail-panel').style.display='none'" aria-label="Close">×</button>
+    <h3>Comparison</h3>
+    <table class="summary-table">
+      <thead><tr><th style="width:35%">District</th><th style="width:20%">PSF/mo</th><th style="width:20%">Zone</th><th style="width:25%">MRT</th></tr></thead>
+      <tbody>${sel.map(d=>`<tr>
+        <td style="font-weight:500">${d.name}${d.recced?' <span class="recce-badge">recce\'d</span>':''}${d.psfLow===lowestPsf?' <span class="winner-tag">lowest</span>':''}</td>
+        <td>$${d.psfLow}–${d.psfHigh}</td>
+        <td>${d.zone}</td>
+        <td>${d.mrt.split('·')[0].trim()}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+    <div class="note-box" style="margin-top:10px"><strong>For HARIO Asia SG (1 pax + transient):</strong> Target $3–6 psf business park or B1 commercial. one-north and Jurong East offer the best cost-to-professionalism ratio. Bukit Batok is cheapest if a storage-hybrid setup works.</div>
+  </div>`;
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function renderPropTypes(){
+  const bars=document.getElementById('psf-bars');
+  const grid=document.getElementById('prop-grid');
+  if(bars.childElementCount>0) return;
+  const maxPsf=16;
+  propTypes.forEach((p,i)=>{
+    const pct=v=>Math.round((v/maxPsf)*100);
+    const el=document.createElement('div');
+    el.style.marginBottom='6px';
+    el.innerHTML=`<div class="psf-bar-label"><span style="color:var(--color-text-primary);font-size:12px">${p.name}</span><span>$${p.psfLow}–$${p.psfHigh}</span></div>
+      <div class="psf-bar-track"><div class="psf-bar-fill" style="left:${pct(p.psfLow)}%;width:${pct(p.psfHigh-p.psfLow)}%;background:${propColors[i]};opacity:0.75"></div></div>`;
+    bars.appendChild(el);
+  });
+  grid.innerHTML=propTypes.map((p,i)=>`<div class="prop-card">
+    <div class="prop-icon"><i class="ti ${p.icon}" aria-hidden="true"></i></div>
+    <div class="prop-name" style="color:${propColors[i]}">${p.name}</div>
+    <div class="prop-psf">$${p.psfLow}–$${p.psfHigh} psf/mo</div>
+    <div class="prop-desc">${p.desc}</div>
+    <div class="prop-pros">${p.pros.map(x=>`<div class="prop-row"><i class="ti ti-check" aria-hidden="true" style="font-size:12px;margin-top:1px;flex-shrink:0"></i><span>${x}</span></div>`).join('')}</div>
+    <div class="prop-cons">${p.cons.map(x=>`<div class="prop-row"><i class="ti ti-x" aria-hidden="true" style="font-size:12px;margin-top:1px;flex-shrink:0"></i><span>${x}</span></div>`).join('')}</div>
+  </div>`).join('');
+}
+
+renderCards();
+</script>
